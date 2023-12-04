@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* body{
+  background-color: #000300;
+} */
+
+nav{
+  font-family: "Poppins";
+  text-transform: uppercase;
+  box-shadow: 0 8px 6px -6px rgba(207, 206, 206, 0.5);
+}
+
+footer{
+  background: linear-gradient(to right, #434343, #000000);
+}
+
+nav{
+  background: linear-gradient(to right, #fff8e3, #ecb11b);
+}
