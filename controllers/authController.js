@@ -4,6 +4,8 @@ import { validateRegistrationInput } from '../helpers/authHelper.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
+
+//Register user
 export const registerController = async (req, res)=>{
     try {
         const { name, email, password, phone, address, answer } = req.body;
@@ -15,8 +17,8 @@ export const registerController = async (req, res)=>{
           return res.status(400).json({
             success: false,
             message,
-          });
-        }
+        });
+    }
 
         //check user
         const existingUSer = await userModel.findOne({email})
@@ -139,7 +141,7 @@ try {
     if(!user){
         res.status(404).send({
             success: false,
-            message: "wrong email or password"
+            message: "wrong email or answer"
         })
     }
     console.log(">>>>>><<<",user)

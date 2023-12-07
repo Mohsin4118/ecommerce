@@ -14,6 +14,6 @@ router.put("/update-product/:pid",requireSignin,isAdmin,formidable(), updateProd
 router.get("/get-product", getProductController)
 router.get("/get-product/:slug", getSingleProductController)
 router.get("/product-photo/:pid", getphotoController)
-router.delete("/product/:pid", deleteProductController)
+router.delete("/delete-product/:pid", deleteProductController)
 
 export default router

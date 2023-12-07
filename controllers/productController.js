@@ -131,14 +131,14 @@ export const deleteProductController = async (req, res)=>{
 //Update product Controller
 export const updateProductController = async (req, res)=>{
     try {
-        const {name,slug, description, price, category, shipping } = req.fields
+        const {name, description, price, category, shipping } = req.fields
         const {photo} = req.files
         
         switch(true){
         case !name: 
         return res.status(500).send({error: "name is required"})
-        case !slug: 
-        return res.status(500).send({error: "slug is required"})
+        // case !slug: 
+        // return res.status(500).send({error: "slug is required"})
         case !description: 
         return res.status(500).send({error: "description is required"})
         case !price: 

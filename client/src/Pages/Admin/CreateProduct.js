@@ -118,8 +118,8 @@ const getCategories = async ()=>{
 </div>
 <div className='mb-3 flex justify-center'>
 {photo && (
-  <div className='mb-3'>
-    <img src={URL.createObjectURL(photo)} alt='product_photo' className='h-48'/>
+  <div className='mb-3 pt-6'>
+    <img src={URL.createObjectURL(photo)} alt='product_photo' className='h-48 rounded rounded-lg'/>
   </div>
 )}
 </div>

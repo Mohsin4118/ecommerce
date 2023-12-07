@@ -6,12 +6,13 @@ import Layout from '../../Components/LayOuts/Layout'
 import AdminMenu from '../../Components/LayOuts/AdminMenu'
 import { Select } from 'antd';
 import TextArea from 'antd/es/input/TextArea'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 const {Option} = Select
 
 const UpdateProduct = () => {
 
     const navigate = useNavigate()
+    const params = useParams()
     const [categories, setCategories] = useState([])
     const [category, setCategory] = useState([])
     const [name, setName] = useState("")
@@ -20,6 +21,7 @@ const UpdateProduct = () => {
     const [quantity, setQuantity] = useState("")
     const [shipping, setShipping] = useState("")
     const [photo, setPhoto] = useState("")
+    const [id , setId] = useState("")
     const authState = useSelector((state) => state.auth);
     
     const instance = axios.create({
@@ -28,7 +30,32 @@ const UpdateProduct = () => {
         Authorization: `${authState.token}`, 
       },
     });
-    
+
+    //Get Single Product
+    const getSingleProduct = async ()=>{
+      try {
+      const { data } = await instance.get(`/api/v1/products/get-product/${params.slug}`);
+      setName(data.product.name)
+      setDescription(data.product.description)
+      setPrice(data.product.price)
+      setQuantity(data.product.quantity)
+      setId(data.product._id)
+      setShipping(data.product.shipping)
+      setCategory(data.product.category._id)
+      // setShipping(data.product.shipping)
+      
+    } catch (error) {
+      console.log(error)
+      toast.error("Something went wrong in getting single product")
+    }
+  }
+
+  useEffect(() => {
+    getSingleProduct();
+    //eslint-disable-next-line
+  }, []);
+
+    // Get Categories
     const getCategories = async ()=>{
       try {
         const {data} = await instance.get(`/api/v1/category/get-categories`)
@@ -43,11 +70,12 @@ const UpdateProduct = () => {
       }
         }
     
-        useEffect(()=>{
+        useEffect(() => {
           getCategories();
-        },[])
-    // Create Product Function
-        const handleSubmit = async (e)=>{
+        }, []);
+
+    // update Product Function
+        const handleUpdate = async (e)=>{
           console.log("in handle submit")
           e.preventDefault()
           try {
@@ -56,7 +84,7 @@ const UpdateProduct = () => {
             productData.append("description", description)
             productData.append("price", price)
             productData.append("shipping", shipping)
-            productData.append("photo", photo)
+            photo && productData.append("photo", photo)
             productData.append("category", category)
             productData.append("quantity", quantity)
     
@@ -64,7 +92,7 @@ const UpdateProduct = () => {
         for (let pair of productData.entries()) {
           console.log(pair[0] + ', ' + pair[1]);
         }
-            const { data } = await instance.post(`/api/v1/products/create-product`, productData, {
+            const { data } = await instance.put(`/api/v1/products/update-product/${id}`, productData, {
               headers: {
                 'Content-Type': 'multipart/form-data',
               },
@@ -72,16 +100,38 @@ const UpdateProduct = () => {
     
             // if(data){
             //   console.log(data)
-            // }
+            // }  
     
             if(data?.success){
               console.log(data?.message)
-              toast.success("Product created successfully")
+              toast.success("Product updated successfully")
               navigate("/dashboard/admin/products")
             }
           } catch (error) {
             console.log(error,"s>>>>>>>>>>>>>>>>>>>>>>>>>")
-            toast.error("Error in creating Product")
+            toast.error("Error in updating Product")
+          }
+        }
+
+        //Delete Product Function
+        const handleDelete = async (e)=>{
+          console.log("in Delete function")
+          // e.preventDefault()
+          try {
+            let answer = window.prompt("type 'delete' you want to delete this product?")
+            console.log(answer)
+            if(answer && answer === "delete"){
+            const { data } = await instance.delete(`/api/v1/products//delete-product/${id}`)
+            if(data?.success){
+              console.log(data?.message)
+              toast.success("Product deleted successfully")
+              navigate("/dashboard/admin/products") 
+            }}else{
+              toast.error("cannot delete")
+            }
+          } catch (error) {
+            console.log("Delete>>>>>>>>>>>>>>>>>>>",error)
+            toast.error("Error in deleting Product")
           }
         }
 
@@ -102,6 +152,7 @@ const UpdateProduct = () => {
      showSearch
      style={{ width: '500px' }}
      onChange={(value)=>{setCategory(value)}}
+     value={category}
      >
       {categories?.map(c=> (
         <Option key={c._id} value={c._id}>
@@ -118,10 +169,14 @@ const UpdateProduct = () => {
   </label>
 </div>
 <div className='mb-3 flex justify-center'>
-{photo && (
-  <div className='mb-3'>
-    <img src={URL.createObjectURL(photo)} alt='product_photo' className='h-48'/>
-  </div>
+{photo ? (
+  <div className='mb-3 pt-6'>
+  <img src={URL.createObjectURL(photo)} alt='product_photo' className='h-48 rounded rounded-lg'/>
+</div>
+) : (
+  <div className='mb-3 pt-6'>
+  <img src={`/api/v1/products/product-photo/${id}`} alt='product_photo' className='h-48 rounded rounded-lg'/>
+</div>
 )}
 </div>
 <div className='mb-3'>
@@ -149,16 +204,24 @@ style={{ width: '500px' }}
 onChange={(value)=>{
   setShipping(value)
 }}
+value={shipping ? "1" : "0"}
 >
   <Option value="0">No</Option>
   <Option value="1">Yes</Option>
 </Select>
 </div>
-<div className=''>
+<div className='mb-3'>
 <button className='font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-yellow-400 w-[500px] text-white font-bold'
-onClick={handleSubmit}
+onClick={handleUpdate}
 >
 <span className="font-medium">UPDATE PRODUCT</span>
+</button>
+</div>
+<div className=''>
+<button className='font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-red-400 w-[500px] text-white font-bold'
+onClick={handleDelete}
+>
+<span className="font-medium">DELETE PRODUCT</span>
 </button>
 </div>
   </div>
