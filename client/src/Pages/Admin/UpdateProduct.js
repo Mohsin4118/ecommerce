@@ -76,8 +76,8 @@ const UpdateProduct = () => {
 
     // update Product Function
         const handleUpdate = async (e)=>{
-          console.log("in handle submit")
-          e.preventDefault()
+          console.log("in handle update")
+          // e.preventDefault()
           try {
             const productData = new FormData
             productData.append("name", name)
@@ -102,6 +102,7 @@ const UpdateProduct = () => {
             //   console.log(data)
             // }  
     
+            console.log("Product updated successfully")
             if(data?.success){
               console.log(data?.message)
               toast.success("Product updated successfully")

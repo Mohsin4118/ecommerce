@@ -133,7 +133,7 @@ export const updateProductController = async (req, res)=>{
     try {
         const {name, description, price, category, shipping } = req.fields
         const {photo} = req.files
-        
+        console.log("in update controller")
         switch(true){
         case !name: 
         return res.status(500).send({error: "name is required"})
@@ -171,3 +171,81 @@ export const updateProductController = async (req, res)=>{
         })
         }
 }
+
+//Filter Product Controller
+// Filter Product Controller
+export const filterProductsController = async (req, res) => {
+    try {
+      const { radio, checked } = req.body;
+      let arg = {};
+  
+      if (checked.length > 0) {
+        // Assuming 'category' is a property of the product model
+        arg.category = { $in: checked }; // Use $in for an array of categories
+      }
+  
+      if (radio && radio.length === 2) {
+        arg.price = { $gte: radio[0], $lte: radio[1] };
+      }
+  
+      const products = await productModel.find(arg);
+      
+      res.status(200).send({
+        success: true,
+        message: 'Filtered products successfully',
+        products,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(400).send({
+        success: false,
+        message: 'Error in filtering products',
+        error,
+      });
+    }
+  };
+  
+// product Count Controller
+export const productCountController = async (req, res)=>{
+try {
+    const total = await productModel.find({}).estimatedDocumentCount()
+    res.status(200).send({
+        success: true,
+        message: "product Count Successfully",
+        total
+    })
+} catch (error) {
+    console.log(error)
+    res.status(400).send({
+        success: false,
+        message: "Error in Product Count",
+        error
+    })
+}
+}
+
+//product list based on controller
+export const productListController = async (req, res) => {
+    try {
+        const perPage = 6
+        const page = req.params.page ? req.params.page : 1
+        const products = await productModel
+            .find({})
+            .select("-photo")
+            .skip((page -1) * perPage)
+            .limit(perPage)
+            .sort({createdAt: -1})
+            res.status(200).send({
+                success: true,
+                products
+            })
+    } catch (error) {
+        console.log(error)
+        res.status(400).send({
+            success: false,
+            message: "error in per page ctrl",
+            error
+        })
+    }
+}
+

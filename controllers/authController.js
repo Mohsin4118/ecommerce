@@ -123,7 +123,7 @@ export const testController = (req, res)=>{
 }
 
 
-//Forgot passord Controller
+//Forgot password Controller
 export const forgetPasswordController = async (req, res) => {
 try {
     const {email, answer,  newPassword} = req.body
