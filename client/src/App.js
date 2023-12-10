@@ -21,6 +21,8 @@ import Orders from './Pages/User/Orders';
 import Profile from './Pages/User/Profile';
 import Products from './Pages/Admin/Products';
 import UpdateProduct from './Pages/Admin/UpdateProduct';
+import Search from './Pages/search';
+import { ProductDetails } from './Pages/ProductDetails';
 
 function App() {
   return (
@@ -28,8 +30,10 @@ function App() {
     <Routes>
       <Route path='/' element={<Home/>}/>
       <Route path='/about' element={<About/>}/>
+      <Route path='/product/:slug' element={<ProductDetails/>}/>
       <Route path='/contact' element={<Contact/>}/>
       <Route path='/policy' element={<Policy/>}/>
+      <Route path='/search' element={<Search/>}/>
       <Route path='*' element={<PageNotFount/>}/>
       <Route path='/register' element={<Register/>}/>
       <Route path='/login' element={<Login/>}/>

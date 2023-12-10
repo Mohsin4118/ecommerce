@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import logo from '../../assets/logo_transparent.png'
 import { NavLink } from 'react-router-dom'
 import {clearUser} from '../../store/authSlice'
-import { useSelector, useDispatch } from 'react-redux'; 
+import { useSelector, useDispatch } from 'react-redux';
 import toast from 'react-hot-toast';
 
 const Header = () => {

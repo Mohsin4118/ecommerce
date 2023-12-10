@@ -1,5 +1,5 @@
 import express from 'express'
-import colors from 'colors'
+// import colors from 'colors'
 import morgan from 'morgan';
 import connectDB from './config/db.js';
 import authRoutes from './routes/userRoute.js';

@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom'
 import Layout from '../Components/LayOuts/Layout'
 import { useSelector } from 'react-redux';
 import { Prices } from '../Components/Prices'
+import SearchInput from '../Components/Form/SearchInput'
+import { useNavigate } from 'react-router-dom'
 
 const Home = () => {
   const authState = useSelector((state) => state.auth);
@@ -15,8 +17,7 @@ const Home = () => {
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(false)
-  // const [auth, setAuth] = useState()  
-  
+  const navigate = useNavigate()  
   const instance = axios.create({
     baseURL: 'http://localhost:5000',
     headers: {
@@ -143,7 +144,7 @@ const getFilterProduct = async()=>{
           </Checkbox>
         ))}
       </div>
-      <h1>Filter By Price</h1>
+      <h1>Filter By Price</h1>  
       <div className='flex flex-col p-2'>
         <Radio.Group onChange={(e)=> setRadio(e.target.value)}>
           {Prices.map((p) => (
@@ -160,6 +161,7 @@ const getFilterProduct = async()=>{
     <div className="w-9/12 flex flex-col justify-center mx-auto text-center">
       {JSON.stringify(radio, null, 4)}
       <h3>All Products</h3>
+      <SearchInput/>
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6'>
               {products && products.map((p, index) => (
                 // <Link to={`/dashboard/admin/product/${p.slug}`}>
@@ -182,7 +184,7 @@ const getFilterProduct = async()=>{
                 </div>
                 <div className='flex flex-row gap-2'>
                 <button className='font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-blue-400  text-white font-bold'
-                onClick={""}
+                onClick={()=>navigate(`/product/${p.slug}`)}
                 >
                 <span className="font-medium">More Details</span>
                 </button>
@@ -199,7 +201,7 @@ const getFilterProduct = async()=>{
             <div className='mt-6'>
             {
               products && products.length < total &&(
-              <button className='bg-red-400 p-3 rounded rounded-md' onClick={(e)=>{
+              <button className='bg-red-400 text-white p-3 rounded rounded-md' onClick={(e)=>{
                 e.preventDefault()
                 setPage(page + 1)
               }}>{loading ?"loading...." : "loadmore"}</button>
