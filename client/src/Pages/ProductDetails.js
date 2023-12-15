@@ -2,14 +2,16 @@ import React, {useEffect, useState} from 'react'
 import Layout from '../Components/LayOuts/Layout'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios'
 
 export const ProductDetails = () => {
 
   const authState = useSelector((state) => state.auth);
   const params = useParams()
+  const navigate = useNavigate()
   const [product, setProduct] = useState([])
-  const [loading, setlaoding] = useState(false)
+  const [loading, setlaoding] = useState(true)
   const [relatedProducts, setRelatedProducts] = useState([ ])
 
   const instance = axios.create({
@@ -38,8 +40,8 @@ export const ProductDetails = () => {
     try {
       setlaoding(true)
       const { data } = await instance.get(`/api/v1/products/related-product/${pid}/${cid}`);  
-      setlaoding(false)
       setRelatedProducts(data?.product)
+      setlaoding(false)
     } catch (error) {
       console.log(error)
     }
@@ -66,7 +68,7 @@ export const ProductDetails = () => {
                   <h4 className='text-lg'>Price: $ <span className='font-semibold font-'>{product.price}</span></h4>
                   <h4 className='text-lg'>Category: <span className='font-semibold'>{product?.category?.name}</span></h4>
                   <button className='font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-green-400  text-white font-bold'
-                  onClick={""}
+                  onClick={()=> navigate('/cart')}
                   >
                 <span className="font-medium">Add To Cart</span>
                 </button>
@@ -107,7 +109,7 @@ export const ProductDetails = () => {
                 </div>
                 <div className='flex flex-row gap-2'>
                 <button className='font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-green-400  text-white font-bold'
-                onClick={""}
+                onClick={()=> navigate('/cart')}
                 >
                 <span className="font-medium">Add To Cart</span>
                 </button>

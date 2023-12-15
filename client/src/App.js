@@ -23,6 +23,9 @@ import Products from './Pages/Admin/Products';
 import UpdateProduct from './Pages/Admin/UpdateProduct';
 import Search from './Pages/search';
 import { ProductDetails } from './Pages/ProductDetails';
+import { Categories } from './Pages/Categories';
+import CategoriesProduct from './Pages/CategoriesProduct';
+import { Cartpage } from './Pages/Cartpage';
 
 function App() {
   return (
@@ -31,6 +34,9 @@ function App() {
       <Route path='/' element={<Home/>}/>
       <Route path='/about' element={<About/>}/>
       <Route path='/product/:slug' element={<ProductDetails/>}/>
+      <Route path='/categories' element={<Categories/>}/>
+      <Route path='/cart' element={<Cartpage/>}/>
+      <Route path='/categories/:slug' element={<CategoriesProduct/>}/>
       <Route path='/contact' element={<Contact/>}/>
       <Route path='/policy' element={<Policy/>}/>
       <Route path='/search' element={<Search/>}/>

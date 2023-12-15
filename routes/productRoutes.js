@@ -10,7 +10,8 @@ import {createProduct,
           productCountController,
           productListController,
           searchProductController,
-          relatedProductController
+          relatedProductController,
+          productCategoriesController
      } from '../controllers/productController.js'
 import formidable from 'express-formidable'
 const router = express.Router();
@@ -29,6 +30,7 @@ router.get("/product-list/:page", productListController)
 router.get("/search/:keyword", searchProductController)
 //similar products
 router.get('/related-product/:pid/:cid', relatedProductController)
-
+// Category Wise Product
+router.get("/product-category/:slug", productCategoriesController)
 
 export default router

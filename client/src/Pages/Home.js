@@ -1,15 +1,17 @@
 import React, {useState, useEffect} from 'react'
 import axios from 'axios'
+import toast from 'react-hot-toast'
 import {Checkbox, Radio} from 'antd'
-import { Link } from 'react-router-dom'
 import Layout from '../Components/LayOuts/Layout'
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { addToCart } from '../store/cart'
 import { Prices } from '../Components/Prices'
 import SearchInput from '../Components/Form/SearchInput'
 import { useNavigate } from 'react-router-dom'
 
 const Home = () => {
   const authState = useSelector((state) => state.auth);
+  const dispatch = useDispatch()
   const [categories, setCategories] = useState([])
   const [products, setProducts] = useState([])
   const [checked, setChecked] = useState([])
@@ -17,6 +19,7 @@ const Home = () => {
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(false)
+  const [cart, setCart] = useState()
   const navigate = useNavigate()  
   const instance = axios.create({
     baseURL: 'http://localhost:5000',
@@ -189,7 +192,12 @@ const getFilterProduct = async()=>{
                 <span className="font-medium">More Details</span>
                 </button>
                 <button className='font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-green-400  text-white font-bold'
-                onClick={""}
+                onClick={()=> {
+                  dispatch(addToCart(p))
+                  toast.success("Item Added to the Cart")
+                }
+              }
+                
                 >
                 <span className="font-medium">Add To Cart</span>
                 </button>
