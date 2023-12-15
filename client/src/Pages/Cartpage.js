@@ -2,10 +2,12 @@ import React, { useEffect } from 'react'
 import Layout from '../Components/LayOuts/Layout'
 import { useSelector, useDispatch } from 'react-redux'
 import {removeFromCart} from '../store/cart'
+import { useNavigate } from 'react-router-dom'
 export const Cartpage = () => {
   const dispatch = useDispatch();
   const authState = useSelector((state) => state.auth);
   const cartItems = useSelector((state) => state.cart.items);
+  const navigate = useNavigate()
 
   const handleRemoveFromCart = (itemId) => {
     dispatch(removeFromCart(itemId));
@@ -81,7 +83,28 @@ export const Cartpage = () => {
                   <p className='font-medium text-xl'>Cart Summary</p>
                   <p className='font-normal'>Total | Checkout | Payment</p>
                   <div className='border-b border-gray-300 w-full'></div>
-                  <p className='mt-4'>Total : {totalPrice()}</p>
+                  <p className='mt-4'>Total : <span className='text-lg font-bold'>{totalPrice()}</span></p>
+                  {authState?.user?.address ? (
+                    <>
+                    <div className='flex flex-col'>
+                      <p className='text-xl font-semibold'>Current Address</p>
+                      <p className='text-lg font-bold text-green-600 text-center'>{authState?.user?.address}</p>
+                      <button className='text-white bg-green-600 p-3 w-full rounded rounded-sm' onClick={()=> navigate('/dashboard/user/profile')}>Update Address</button>
+                    </div>
+                    </>
+                  ) : (
+                  <div className='mb-3'>
+                    {
+                      authState.token ? (
+                        <button className='text-white bg-green-600 p-3 w-full rounded rounded-sm' onClick={()=> navigate("/dashboard/user/profile")}>Update Address</button>
+                      ):(
+                        <button className='text-white bg-green-600 p-3 w-full rounded rounded-sm text-lg font-semibold' onClick={()=> navigate("/login", {
+                          state: "/cart",
+                        })} >Plz Login To Checkout Form</button>
+                      )
+                    }
+                  </div>
+                  )}
                   </div>
                 </div>
               </div>

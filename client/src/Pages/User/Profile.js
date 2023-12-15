@@ -7,15 +7,20 @@ import { useSelector, useDispatch } from 'react-redux';
 import {useNavigate} from 'react-router-dom'
 import InputField from '../../Components/InputField';
 import Button from '../../Components/Button';
+import { updateUser } from '../../store/authSlice';
 
 const Profile = () => {
 
+  const authState = useSelector((state) => state.auth);
   const instance = axios.create({
-    baseURL: 'http://localhost:5000', 
+    baseURL: 'http://localhost:5000',
+    headers: {
+      Authorization: `${authState.token}`, 
+    },
   });
 
   const navigate = useNavigate();
-  const authState = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -34,8 +39,16 @@ const Profile = () => {
     e.preventDefault();
     // toast.success("Register Successfully")
 try {
-    const res = await instance.post(`/api/v1/auth/register`, 
+    const {data} = await instance.put(`/api/v1/auth/profile`, 
     {name, email, password, phone,address})
+
+    if(data?.error){
+      console.log("")
+      toast.error(data?.error)
+    }else{
+      dispatch(updateUser(data?.updateUser));
+      toast.success("profile updated successfully")
+    }
     
 } catch (error) {
     console.log(error)
@@ -56,7 +69,7 @@ try {
         <form className='w-full mt-6 max-w-md p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md shadow-offset-right-bottom' onSubmit={handleSubmit}>
           <InputField label='Name' type='text' value={name} onChange={(e) => setName(e.target.value)} />
           <InputField label='Email address' type='email' value={email} required={true} disabled={true} onChange={(e) => setEmail(e.target.value)} />
-          <InputField label='Password' type='password' value={password} required={true} onChange={(e) => setPassword(e.target.value)} />
+          <InputField label='Password' type='password' value={password} onChange={(e) => setPassword(e.target.value)} />
           {/* <InputField label='Confirm Password' type='password' value={confirmPassword} required={true} onChange={(e) => setConfirmPassword(e.target.value)} /> */}
           <InputField label='Phone number' type='tel' pattern='[0-9]{3}-[0-9]{3}-[0-9]{4}' value={phone} required={true} onChange={(e) => setPhone(e.target.value)} />
           <InputField label='Address' type='text' value={address} onChange={(e) => setAddress(e.target.value)} />
