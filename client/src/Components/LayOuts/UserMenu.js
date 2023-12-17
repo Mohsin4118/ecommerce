@@ -2,7 +2,7 @@ import React, {useState}from 'react'
 import {  NavLink } from 'react-router-dom'
 
 const UserMenu = () => {
-    const [showSidebar, setShowSidebar] = useState(false);
+    const [showSidebar, setShowSidebar] = useState(true);
 
     const toggleSidebar = () => {
       setShowSidebar(!showSidebar);

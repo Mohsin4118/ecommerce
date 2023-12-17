@@ -20,7 +20,7 @@ const userSchema = mongoose.Schema({
         required: true
     },
     address: {
-        type: String,
+        type: {},
         required: true
     },
     answer:{
@@ -34,4 +34,4 @@ const userSchema = mongoose.Schema({
 },
 {timeStamps: true})
 
-export default mongoose.model('users', userSchema)
+export default mongoose.model('Users', userSchema)

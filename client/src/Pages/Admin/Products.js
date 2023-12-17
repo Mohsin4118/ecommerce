@@ -52,7 +52,9 @@ const Products = () => {
                 className='bg-white rounded-md p-3 shadow-md transition duration-300 ease-in-out transform hover:scale-105 w-72 md:w-48 lg:w-72'
                 style={{ minWidth: '15rem' }}
                 >
-                    <img src={`/api/v1/products/product-photo/${p._id}`} alt=''/>
+                  <div className='flex items-center justify-center mb-3 h-24'>
+                <img src={`/api/v1/products/product-photo/${p._id}`} alt='' className='h-full max-h-full '/>
+                  </div>
                 <div className='uppercase tracking-wide text-sm text-indigo-500 font-semibold'>
                 <p>Name: <span className='text-yellow-500'>{p.name}</span></p>
                 </div>

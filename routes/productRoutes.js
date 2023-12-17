@@ -1,11 +1,20 @@
 import express from 'express';
 import {isAdmin, requireSignin} from '../middlewares/authMiddleware.js'
 import {createProduct,
-     getProductController,
-     getSingleProductController,
-     getphotoController,
-     deleteProductController,
-     updateProductController} from '../controllers/productController.js'
+          getProductController,
+          getSingleProductController,
+          getphotoController,
+          deleteProductController,
+          updateProductController,
+          filterProductsController,
+          productCountController,
+          productListController,
+          searchProductController,
+          relatedProductController,
+          productCategoriesController,
+          braintreeTokenController,
+          braintreePaymentController
+     } from '../controllers/productController.js'
 import formidable from 'express-formidable'
 const router = express.Router();
 
@@ -14,6 +23,23 @@ router.put("/update-product/:pid",requireSignin,isAdmin,formidable(), updateProd
 router.get("/get-product", getProductController)
 router.get("/get-product/:slug", getSingleProductController)
 router.get("/product-photo/:pid", getphotoController)
-router.delete("/product/:pid", deleteProductController)
+router.delete("/delete-product/:pid", deleteProductController)
+//filter product Route
+router.post("/filter-product", filterProductsController)
+router.get("/product-count", productCountController)
+router.get("/product-list/:page", productListController)
+//search controller
+router.get("/search/:keyword", searchProductController)
+//similar products
+router.get('/related-product/:pid/:cid', relatedProductController)
+// Category Wise Product
+router.get("/product-category/:slug", productCategoriesController)
+
+//Payment roiutes
+//token
+router.get("/braintree/token", braintreeTokenController)
+
+//paymeny
+router.post("/braintree/payment",requireSignin, braintreePaymentController)
 
 export default router

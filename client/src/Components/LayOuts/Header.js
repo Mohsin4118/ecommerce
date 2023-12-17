@@ -2,14 +2,19 @@ import React, {useState} from 'react'
 import logo from '../../assets/logo_transparent.png'
 import { NavLink } from 'react-router-dom'
 import {clearUser} from '../../store/authSlice'
-import { useSelector, useDispatch } from 'react-redux'; 
+import { useSelector, useDispatch } from 'react-redux';
 import toast from 'react-hot-toast';
+import { useCategory } from '../../hooks/useCategory';
+import { Badge, Space } from 'antd'
 
 const Header = () => {
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const authState = useSelector((state) => state.auth);
+  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
+  const categories = useCategory()
   const dispatch = useDispatch();
+  const authState = useSelector((state) => state.auth);
+  const cartItems = useSelector((state) => state.cart.items);
   const handleLogOut = () => {
     dispatch(clearUser());
     toast.success("Logout Successfully")
@@ -18,6 +23,10 @@ const Header = () => {
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
+
+  const toggleCategoryDropdown = () => {
+    setIsCategoryDropdownOpen(!isCategoryDropdownOpen)
+  }
 
   return (
     <>  
@@ -40,7 +49,7 @@ const Header = () => {
         </svg>
         <span className="sr-only">Search icon</span>
       </div>
-      <input type="text" id="search-navbar" className="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search..."/>
+      <input type="text" id="search-navbar" className="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-blue-500 focus:border-blue" placeholder="Search..."/>
     </div>
     <button data-collapse-toggle="navbar-search" type="button" className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-search" aria-expanded="false">
         <span className="sr-only">Open main menu</span>
@@ -63,8 +72,50 @@ const Header = () => {
           <NavLink to="/" className="block py-2 pl-3 pr-4 text-white font-bold hover:border-b border-black border-solid bg-blue-700  md:bg-transparent md:text-gray-600 md:p-0 md:dark:text-blue-500" >Home</NavLink>
         </li>
         <li>
-          <NavLink to="/pageNotFount" className="block py-2 pl-3 pr-4 text-white hover:border-b border-black border-solid bg-blue-700 md:bg-transparent md:text-gray-600 md:p-0 md:dark:text-blue-500">Category</NavLink>
+        <div className="relative">
+        <button
+          id="dropdownNavbarLink"
+          onClick={toggleCategoryDropdown}
+          className="flex items-center justify-between w-full py-2 px-3 hover:border-b border-black text-gray-600 uppercase hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-gray-600 md:p-0 md:w-auto"
+        >
+          Categories
+          <svg
+            className="w-2.5 h-2.5 ms-2.5"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 10 6"
+          >
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+          </svg>
+        </button>
+        {isCategoryDropdownOpen && (
+          
+          <div
+            id="dropdownNavbar"
+            className="z-10 font-normal bg-white divide-gray-100 rounded-lg shadow absolute top-full left-0 mt-2 w-44 dark:bg-gray-700 dark:divide-gray-600"
+          >
+            <ul className="py-2 text-sm text-gray-700 dark:text-gray-400" aria-labelledby="dropdownLargeButton">
+            <li>
+                <NavLink to={`/categories`} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                  All Categories
+                </NavLink>
+              </li>
+              {categories.map((c, index)=>(
+              <li>
+                <NavLink to={`/categories/${c.slug}`} key={c._id} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                  {c.name}
+                </NavLink>
+              </li>
+              ))}
+              </ul>
+          </div>
+        )}
+        </div>
         </li>
+        {/* <li>
+          <NavLink to="/pageNotFount" className="block py-2 pl-3 pr-4 text-white hover:border-b border-black border-solid bg-blue-700 md:bg-transparent md:text-gray-600 md:p-0 md:dark:text-blue-500">Category</NavLink>
+        </li> */}
         {
           !authState.user ? (
             <>
@@ -118,7 +169,11 @@ const Header = () => {
           )
         }
         <li>
-          <NavLink to="/pageNotFount" className="block py-2 pl-3 pr-4 text-white hover:border-b border-black border-solid bg-blue-700  md:bg-transparent md:text-gray-600 md:p-0 md:dark:text-blue-500">Cart</NavLink>
+        <Space size="large">
+        <Badge count={cartItems.length} offset={[10, -6]} showZero>
+          <NavLink to="/cart" className="block py-2 pl-3 pr-4 text-white hover:border-b border-black border-solid bg-blue-700  md:bg-transparent md:text-gray-600 md:p-0 md:dark:text-blue-500">Cart</NavLink>
+        </Badge>
+        </Space>
         </li>
       </ul>
     </div>

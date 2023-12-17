@@ -21,6 +21,11 @@ import Orders from './Pages/User/Orders';
 import Profile from './Pages/User/Profile';
 import Products from './Pages/Admin/Products';
 import UpdateProduct from './Pages/Admin/UpdateProduct';
+import Search from './Pages/search';
+import { ProductDetails } from './Pages/ProductDetails';
+import { Categories } from './Pages/Categories';
+import CategoriesProduct from './Pages/CategoriesProduct';
+import { Cartpage } from './Pages/Cartpage';
 
 function App() {
   return (
@@ -28,8 +33,13 @@ function App() {
     <Routes>
       <Route path='/' element={<Home/>}/>
       <Route path='/about' element={<About/>}/>
+      <Route path='/product/:slug' element={<ProductDetails/>}/>
+      <Route path='/categories' element={<Categories/>}/>
+      <Route path='/cart' element={<Cartpage/>}/>
+      <Route path='/categories/:slug' element={<CategoriesProduct/>}/>
       <Route path='/contact' element={<Contact/>}/>
       <Route path='/policy' element={<Policy/>}/>
+      <Route path='/search' element={<Search/>}/>
       <Route path='*' element={<PageNotFount/>}/>
       <Route path='/register' element={<Register/>}/>
       <Route path='/login' element={<Login/>}/>
@@ -42,7 +52,7 @@ function App() {
         <Route path='admin' element={<AdminDashboard/>}/>
         <Route path='admin/create-category' element={<CreateCategory/>}/>
         <Route path='admin/create-product' element={<CreateProduct/>}/>
-        <Route path='admin/update-product' element={<UpdateProduct/>}/>
+        <Route path='admin/product/:slug' element={<UpdateProduct/>}/>
         <Route path='admin/users' element={<Users/>}/>
         <Route path='admin/products' element={<Products/>}/>
       </Route>

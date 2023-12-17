@@ -4,6 +4,8 @@ import { validateRegistrationInput } from '../helpers/authHelper.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
+
+//Register user
 export const registerController = async (req, res)=>{
     try {
         const { name, email, password, phone, address, answer } = req.body;
@@ -15,8 +17,8 @@ export const registerController = async (req, res)=>{
           return res.status(400).json({
             success: false,
             message,
-          });
-        }
+        });
+    }
 
         //check user
         const existingUSer = await userModel.findOne({email})
@@ -121,7 +123,7 @@ export const testController = (req, res)=>{
 }
 
 
-//Forgot passord Controller
+//Forgot password Controller
 export const forgetPasswordController = async (req, res) => {
 try {
     const {email, answer,  newPassword} = req.body
@@ -139,7 +141,7 @@ try {
     if(!user){
         res.status(404).send({
             success: false,
-            message: "wrong email or password"
+            message: "wrong email or answer"
         })
     }
     console.log(">>>>>><<<",user)
@@ -157,4 +159,21 @@ try {
         message: error
     })
 }
+}
+
+
+export const updateProfileController = async(req, res) => {
+    try {
+
+        const {name, email, password, address, phone} = req.body
+        const user = await userModel.findById(req.user._id)
+        
+    } catch (error) {
+        console.log(error)
+        res.status(400).send({
+            success: false,
+            message: "error in updating user profile",
+            errror
+        })
+    }
 }
