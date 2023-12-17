@@ -1,7 +1,66 @@
 import slugify from "slugify"
 import productModel from "../models/productModel.js"
 import categoryModel from "../models/categoryModel.js"
+import orderModel from "../models/orderModel.js"
 import fs from 'fs'
+import braintree from "braintree"
+
+//Payment Gateway
+var gateway = new braintree.BraintreeGateway({
+    environment: braintree.Environment.Sandbox,
+    merchantId: "85phkh9bnc2d7kmz",
+    publicKey: "3kbcx92w632dbw4c",
+    privateKey: "ac60fc7472ad59541364aea42da9eb58",
+  });
+
+//payment gateway API
+//token
+export const braintreeTokenController = async (req, res) => {
+    gateway.clientToken.generate({}, function (err, response){
+        if(err){
+            console.log(err)
+            res.status(500).send(err)
+        }else{
+            res.send(response)
+        }
+    })
+
+}
+
+//payment
+export const braintreePaymentController = async (req, res) => {
+    try {
+        const {nonce, cartItems} = req.body
+    let total = 0
+    cartItems.map((i)=>{
+        total += i.price
+    })
+    let newTransaction = gateway.transaction.sale(
+        {
+          amount: total,
+          paymentMethodNonce: nonce,
+          options: {
+            submitForSettlement: true,
+          },
+        },
+        function (error, result) {
+            if (result) {
+              const order = new orderModel({
+                products: cartItems,
+                payment: result,
+                buyer: req.user._id,
+              }).save();
+              res.json({ ok: true });
+            } else {
+              res.status(500).send(error);
+            }
+          }
+        );
+    } catch (error) {
+        console.log(error)
+    }
+
+}
 
 //Create Products
 export const createProduct = async (req, res)=>{

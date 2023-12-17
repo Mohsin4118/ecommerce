@@ -11,7 +11,9 @@ import {createProduct,
           productListController,
           searchProductController,
           relatedProductController,
-          productCategoriesController
+          productCategoriesController,
+          braintreeTokenController,
+          braintreePaymentController
      } from '../controllers/productController.js'
 import formidable from 'express-formidable'
 const router = express.Router();
@@ -32,5 +34,12 @@ router.get("/search/:keyword", searchProductController)
 router.get('/related-product/:pid/:cid', relatedProductController)
 // Category Wise Product
 router.get("/product-category/:slug", productCategoriesController)
+
+//Payment roiutes
+//token
+router.get("/braintree/token", braintreeTokenController)
+
+//paymeny
+router.post("/braintree/payment",requireSignin, braintreePaymentController)
 
 export default router

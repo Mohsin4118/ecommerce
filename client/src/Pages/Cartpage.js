@@ -1,13 +1,27 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Layout from '../Components/LayOuts/Layout'
 import { useSelector, useDispatch } from 'react-redux'
-import {removeFromCart} from '../store/cart'
+import {removeFromCart, clearCart} from '../store/cart'
 import { useNavigate } from 'react-router-dom'
+import DropIn from "braintree-web-drop-in-react";
+import axios from 'axios'
+import toast from 'react-hot-toast'
+
 export const Cartpage = () => {
   const dispatch = useDispatch();
   const authState = useSelector((state) => state.auth);
   const cartItems = useSelector((state) => state.cart.items);
+  const [clientToken, setClientToken] = useState("")
+  const [loading, setLoading] = useState(false);
+  const [instance, setInstance] = useState("")
   const navigate = useNavigate()
+
+  const baseUrl = axios.create({
+    baseURL: 'http://localhost:5000',
+    headers: {
+      Authorization: `${authState.token}`,
+    },
+  });
 
   const handleRemoveFromCart = (itemId) => {
     dispatch(removeFromCart(itemId));
@@ -28,6 +42,43 @@ export const Cartpage = () => {
     }
   }
 
+  //get payment gateway token
+  const getToken = async () => {
+    console.log("in getToken")
+    try {
+      console.log("make Api request")
+      const {data} = await baseUrl.get("/api/v1/products/braintree/token")
+      setClientToken(data?.clientToken)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  console.log(">>>>>>>>",clientToken)
+
+  useEffect(()=>{
+    getToken()
+  },[authState?.token])
+
+  const handlePayment = async () => {
+    try {
+      console.log("in handlEpaymemnt")
+      setLoading(true)
+      const {nonce} = await instance.requestPaymentMethod();
+      const {data} = baseUrl.post("/api/v1/products/braintree/payment", {
+        nonce, cartItems
+      })
+      console.log("in handlEpaymemnt make api request")
+      setLoading(false)
+      dispatch(clearCart());
+      navigate("/dashboard/user/orders")
+      toast("payment completed successfully")
+    } catch (error) {
+      console.log(error)
+      setLoading(false);
+    }
+  }
+  console.log(">>>>>>>>>>>>>>>>>>>>>>>>INSTANCE", instance)
+
   return (
     <Layout title={"Addd Tp Cart"}>
       <div className='conatainer-fluid'>
@@ -37,29 +88,6 @@ export const Cartpage = () => {
           ? `You have ${cartItems.length} items in your cart ${
             authState?.token ? "" : `please login to checkout`}`
              : "Your cart is empty" }</p>
-
-             {/* <div className='flex'>
-              {JSON.stringify(cartItems, null, 4)}
-              {cartItems.map(p => (
-                <h1 key={p._id}>{p.name}</h1>
-              ))}
-
-             </div> */}
-             {/* <div  className='grid grid-cols-12'>
-              {cartItems?.map((p) => (
-
-              <div className='col-span-8 flex justify-center items-center'>
-              <img
-                  src={`/api/v1/products/product-photo/${p._id}`}
-                  alt={p.name}
-                  className="rounded-lg mb-4 shadow-md w-full shadow-md"
-                />                
-              </div>
-              ))}
-              <div className='col-span-4 flex justify-center items-center'>
-                <h1>description</h1>
-              </div>
-             </div> */}
               <div  className='grid grid-cols-12'>
                 <div className='col-span-8 p-6'>
              {cartItems?.map( p => (
@@ -105,6 +133,36 @@ export const Cartpage = () => {
                     }
                   </div>
                   )}
+                  <div className='mt-3'>
+                    {clientToken && cartItems.length > 0 ? (
+                      <>
+                      {/* <DropIn
+                        options={{
+                          authorization: clientToken,
+                          paypal: {
+                            flow: "vault",
+                          },
+                        }}
+                        onInstance={(instance) => setInstance(instance)}
+                        /> */}
+                          <DropIn
+                                options={{
+                                  authorization: clientToken,
+                                  paypal: {
+                                    flow: "vault",
+                                  },
+                                }}
+                                onInstance={(instance) => setInstance(instance)}
+                              />
+                    <button className='p-2 bg-black text-white font-semibold text-base w-full rounded rounded-xl'
+                    onClick={handlePayment}
+                    disabled={loading || !instance || !authState?.user?.address}
+                    >{loading ? "Processing...." : "make Payment"}</button>
+                      </>
+                    ):(
+                      <p>Loading DropIn...</p>
+                    )}
+                  </div>
                   </div>
                 </div>
               </div>
