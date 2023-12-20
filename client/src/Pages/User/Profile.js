@@ -41,12 +41,13 @@ const Profile = () => {
 try {
     const {data} = await instance.put(`/api/v1/auth/profile`, 
     {name, email, password, phone,address})
+    console.log(DataTransferItem)
 
     if(data?.error){
       console.log("")
       toast.error(data?.error)
     }else{
-      dispatch(updateUser(data?.updateUser));
+      dispatch(updateUser(data?.updatedUser));
       toast.success("profile updated successfully")
     }
     

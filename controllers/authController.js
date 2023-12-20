@@ -1,5 +1,6 @@
 import { comparePassword, hashPassword } from '../helpers/authHelper.js'
 import userModel from  '../models/userModel.js'
+import orderModel from '../models/orderModel.js';
 import { validateRegistrationInput } from '../helpers/authHelper.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -167,6 +168,26 @@ export const updateProfileController = async(req, res) => {
 
         const {name, email, password, address, phone} = req.body
         const user = await userModel.findById(req.user._id)
+        //password
+    if (password && password.length < 6) {
+        return res.json({ error: "Passsword is required and 6 character long" });
+      }
+      const hashedPassword = password ? await hashPassword(password) : undefined;
+        const updatedUser = await userModel.findByIdAndUpdate(
+      req.user._id,
+      {
+        name: name || user.name,
+        password: hashedPassword || user.password,
+        phone: phone || user.phone,
+        address: address || user.address,
+      },
+      { new: true }
+    );
+    res.status(200).send({
+      success: true,
+      message: "Profile Updated SUccessfully",
+      updatedUser,
+    });
         
     } catch (error) {
         console.log(error)
@@ -174,6 +195,24 @@ export const updateProfileController = async(req, res) => {
             success: false,
             message: "error in updating user profile",
             errror
+        })
+    }
+}
+
+export const getOrderController = async (req, res) => {
+    try {
+        const buyerId = req.user._id;
+        console.log("buyer id",buyerId)
+        const orders = await orderModel.find({buyer: buyerId})
+        .populate("products", "-photo").populate("buyer", "name")
+        console.log("backend", orders)
+        res.json(orders)
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            success: false,
+            message: "error in getting order details",
+            error
         })
     }
 }
