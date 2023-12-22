@@ -5,7 +5,9 @@ import {registerController,
         testController,
         forgetPasswordController,
         updateProfileController,
-        getOrderController
+        getOrderController,
+        getAllOrderController,
+        updateStatusController
     } from '../controllers/authController.js'
 
 const router = express.Router();
@@ -23,5 +25,12 @@ router.get('/admin-auth', requireSignin, isAdmin, (req, res)=>{
 router.put('/profile', requireSignin, updateProfileController)
 //get order controller
 router.get('/orders', requireSignin, getOrderController)
+
+//get all orders
+router.get('/all-orders', requireSignin, isAdmin, getAllOrderController)
+
+//update Status
+router.put('/status/:orderId', requireSignin, isAdmin, updateStatusController)
+
 
 export default router

@@ -216,3 +216,38 @@ export const getOrderController = async (req, res) => {
         })
     }
 }
+
+export const getAllOrderController = async (req, res) => {
+    try {
+        const buyerId = req.user._id;
+        console.log("buyer id",buyerId)
+        const orders = await orderModel.find({})
+        .populate("products", "-photo").populate("buyer", "name").sort({createdAt: "-1"})
+        console.log("backend", orders)
+        res.json(orders)
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            success: false,
+            message: "error in getting order details",
+            error
+        })
+    }
+}
+
+export const updateStatusController = async (req, res) => {
+    try {
+        const {orderId} = req.params
+        const {status} = req.body
+        const updatedStatus = await orderModel.findByIdAndUpdate(orderId, {status: status}, {new:true})
+        res.status(200).json(updatedStatus)
+        
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            success: false,
+            message: "cannot update order status",
+            error
+        })
+    }
+}
